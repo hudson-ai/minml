@@ -1,8 +1,9 @@
 import os
 import pytest
+from typing import Annotated
 from guidance import block
 from guidance.models import LlamaCpp
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel, TypeAdapter, StringConstraints
 from minml import types
 
 MODEL_FILE = os.path.expanduser("~/pkg/mistral/mistral-7b-instruct.gguf")
@@ -29,6 +30,13 @@ def test_gen_str(model):
         m += types.gen_str()
     TypeAdapter(str).validate_json(m["str"])
 
+def test_regex(model):
+    type = Annotated[str, StringConstraints(pattern=r'[A-Z]\d')]
+    m = model + "my favorite steak sauce is "
+    with block("str"):
+        m += types.gen_type(type)
+    o = TypeAdapter(type).validate_json(m['str'])
+    assert o == 'A1'
 
 def test_gen_int(model):
     m = model + "9 + 2 = "
