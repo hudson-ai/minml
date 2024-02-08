@@ -40,8 +40,8 @@ def test_gen_int(model):
 def test_gen_float(model):
     m = model + "9.5 + 2 = "
     with block("float"):
-        m += types.gen_int()
-    TypeAdapter(int).validate_json(m["float"])
+        m += types.gen_float()
+    TypeAdapter(float).validate_json(m["float"])
 
 
 def test_gen_bool(model):
@@ -54,7 +54,7 @@ def test_gen_bool(model):
 def test_gen_schema(model, guy_schema):
     m = model + "A dude: "
     with block("guy"):
-        m += types.gen_type(guy_schema)
+        m += types.gen_schema(guy_schema)
     guy_schema.model_validate_json(m["guy"])
 
 
