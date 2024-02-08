@@ -14,8 +14,8 @@ jobs:
 
     - name: Download dependencies
       run: |
-        - mkdir pkg/mistral --parents
-        - wget -O pkg/mistral/mistral-7b-instruct.gguf https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q8_0.gguf
+        mkdir pkg/mistral --parents
+        wget -O pkg/mistral/mistral-7b-instruct.gguf https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q8_0.gguf
 
     - name: Install dependencies
       run: make
