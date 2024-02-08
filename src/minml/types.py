@@ -4,6 +4,7 @@ from typing_extensions import _AnnotatedAlias
 from pydantic import StringConstraints, BaseModel
 import guidance
 from guidance import gen, select
+from guidance._grammar import Select
 
 __all__ = [
     "gen_bool",
@@ -37,7 +38,7 @@ def gen_str(**kwds):
     return delim + gen(**kwds, stop=delim) + delim
 
 
-def gen_list(type, limit=100):
+def gen_list(type):
     return _gen_sequence(type, "[", "]")
 
 
@@ -80,20 +81,10 @@ def gen_type(type):
     raise NotImplementedError("Can't gen type {type!r}")
 
 
-@guidance(stateless=False)
-def _gen_sequence(lm, type, opener, closer, limit=100):
-    lm += opener
-    _val = gen_type(type)
-    for i in range(limit):
-        if i == 0:
-            val = _val
-        else:
-            val = f", " + _val
-        lm += select([closer, val], name="value")
-        if lm["value"] == closer:
-            return lm
-    lm += closer
-    return lm
+def _gen_sequence(type, opener, closer):
+    s = Select([], capture_name=None, recursive=True)
+    s.values = [gen_type(type), s + ", " + gen_type(type)]
+    return opener + select([closer, s + closer])
 
 
 def _gen_generic_alias_type(origin, args):
