@@ -1,7 +1,8 @@
-from types import UnionType, NoneType
-from typing import get_args
+from types import UnionType, NoneType, GenericAlias
+from typing import get_origin, get_args
 from typing_extensions import _AnnotatedAlias
 from pydantic import StringConstraints
+import guidance
 from guidance import gen, select
 
 __all__ = [
@@ -9,6 +10,7 @@ __all__ = [
     "gen_int",
     "gen_float",
     "gen_str",
+    "gen_list",
     "gen_type",
 ]
 
@@ -30,7 +32,12 @@ def gen_float():
 
 
 def gen_str(**kwds):
-    return '"' + gen(**kwds, stop='"') + '"'
+    delim = '"'
+    return delim + gen(**kwds, stop=delim) + delim
+
+
+def gen_list(type, limit=100):
+    return _gen_sequence(type, "[", "]")
 
 
 def gen_type(type):
@@ -44,16 +51,43 @@ def gen_type(type):
         return gen_float()
     if type is str:
         return gen_str()
+    if isinstance(type, GenericAlias):
+        origin = get_origin(type)
+        args = get_args(type)
+        return _gen_generic_alias_type(origin, args)
     if isinstance(type, _AnnotatedAlias):
         type, *annotations = get_args(type)
-        return _gen_annotated_type(type, *annotations)
+        return _gen_annotated_type(type, annotations)
     if isinstance(type, UnionType):
         types = get_args(type)
         return _gen_union_type(*types)
     raise NotImplementedError("Can't gen type {type!r}")
 
 
-def _gen_annotated_type(type, *annotations):
+@guidance(stateless=False)
+def _gen_sequence(lm, type, opener, closer, limit=100):
+    lm += opener
+    _val = gen_type(type)
+    for i in range(limit):
+        if i == 0:
+            val = _val
+        else:
+            val = f", " + _val
+        lm += select([closer, val], name="value")
+        if lm["value"] == closer:
+            return lm
+    lm += closer
+    return lm
+
+
+def _gen_generic_alias_type(origin, args):
+    if origin is list and len(args) == 1:
+        type = args[0]
+        return gen_list(type)
+    raise NotImplementedError
+
+
+def _gen_annotated_type(type, annotations):
     if type is str:
         if len(annotations) == 1 and isinstance(annotations[0], StringConstraints):
             kmap = {"pattern": "regex", "max_length": "max_tokens"}
