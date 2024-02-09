@@ -1,4 +1,5 @@
 import os
+import gpts
 import pytest
 from typing import Annotated
 from guidance import block
@@ -6,8 +7,8 @@ from guidance.models import LlamaCpp
 from pydantic import BaseModel, TypeAdapter, StringConstraints
 from minml import types
 
-MODEL_FILE = os.path.expanduser("~/pkg/mistral/mistral-7b-instruct.gguf")
 
+MODEL_FILE = gpts.Mistral().path()
 
 @pytest.fixture(scope="session")
 def model():

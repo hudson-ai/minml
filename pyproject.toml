@@ -7,9 +7,15 @@ authors = [
 description = "Remove the yammering from LLM outputs."
 dependencies = [
   "pyparsing",
-  "pytest",
   "pydantic",
   "guidance",
+]
+
+[project.optional-dependencies]
+develop = [
+  "pytest",
+  "build",
+  "gpts",
 ]
 
 [project.urls]
