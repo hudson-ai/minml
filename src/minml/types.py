@@ -1,6 +1,7 @@
 from types import UnionType, NoneType, GenericAlias
-from typing import get_origin, get_args
+from typing import get_origin, get_args, Callable
 from collections.abc import Collection
+import inspect
 from typing_extensions import _AnnotatedAlias
 from annotated_types import GroupedMetadata
 from pydantic import StringConstraints, BaseModel
@@ -94,6 +95,14 @@ def gen_type(type: Type | None) -> GrammarFunction:
     if issubclass(type, BaseModel):
         return gen_pydantic(type)
     raise NotImplementedError(f"Can't gen type {type!r}")
+
+
+def gen_signature(func: Callable):
+    signature = inspect.signature(func)
+    params = signature.parameters
+    annotations = {k: v.annotation for k, v in params.items()}
+    if any(v is inspect._empty for v in annotations.values()):
+        raise ValueError(f"Function {func!r} does not have fully annotated signature")
 
 
 def _gen_generic_alias_type(origin: Type, args: Collection[Type]) -> GrammarFunction:
