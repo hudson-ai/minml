@@ -1,6 +1,6 @@
 [project]
 name = "minml"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
     { name="Hudson Cooper", email="hncooper96@gmail.com" },
 ]
@@ -8,9 +8,10 @@ description = "Remove the yammering from LLM outputs."
 dependencies = [
   "pyparsing",
   "pytest",
+  "pydantic",
   "guidance",
 ]
 
 [project.urls]
-source = "https://github.com/hudson-ai"
+source = "https://github.com/hudson-ai/minml/"
 download = "https://pypi.org/project/minml/#files"
