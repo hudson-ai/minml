@@ -2,12 +2,13 @@
 name = "minml"
 version = "0.0.1"
 authors = [
-    { name="Hudson Cooper", email="hmncooper96@gmail.com" },
+    { name="Hudson Cooper", email="hncooper96@gmail.com" },
 ]
 description = "Remove the yammering from LLM outputs."
 dependencies = [
   "pyparsing",
   "pytest",
+  "guidance",
 ]
 
 [project.urls]
