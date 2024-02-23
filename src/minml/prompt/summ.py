@@ -29,29 +29,42 @@ class PromptHelper(ABC):
 
     @classmethod
     def function(
-        cls, response_type=None, capture_name="response", **kwds
+        cls, response_type: Type | None = None, capture_name: str = "response", **kwds
     ) -> RawFunction:
+        return _prompt_with_system_and_user_message(
+            system_message=cls.SYSTEM_MESSAGE,
+            user_message=cls.USER_MESSAGE,
+            response_type=response_type,
+            capture_name=capture_name,
+            **kwds
+        )
 
-        @guidance(stateless=False, dedent=False)
-        def wrapped(lm):
-            system = role("system") if isinstance(lm, Chat) else nullcontext
-            user = role("user") if isinstance(lm, Chat) else nullcontext
-            assistant = role("assistant") if isinstance(lm, Chat) else nullcontext
-            if cls.SYSTEM_MESSAGE is not None:
-                with system:
-                    lm += cls.SYSTEM_MESSAGE.format(**kwds)
-            with user:
-                lm += cls.USER_MESSAGE.format(**kwds)
-            with assistant, block(capture_name):
-                if response_type is None:
-                    grammar = gen()
-                else:
-                    # TODO: add type-hints to the user/system bit?
-                    grammar = gen_type(response_type)
-                lm += grammar
-            return lm
 
-        return wrapped()
+@guidance(stateless=False)
+def _prompt_with_system_and_user_message(
+    lm: Model,
+    system_message: str,
+    user_message: str,
+    capture_name: str | None,
+    response_type: Type | None,
+    **kwds
+):
+    system = role("system") if isinstance(lm, Chat) else nullcontext
+    user = role("user") if isinstance(lm, Chat) else nullcontext
+    assistant = role("assistant") if isinstance(lm, Chat) else nullcontext
+    if system_message is not None:
+        with system:
+            lm += system_message.format(**kwds)
+    with user:
+        lm += user_message.format(**kwds)
+    with assistant, block(capture_name):
+        if response_type is None:
+            grammar = gen()
+        else:
+            # TODO: add type-hints to the user/system bit?
+            grammar = gen_type(response_type)
+        lm += grammar
+    return lm
 
 
 class DBQPrompt(PromptHelper):
