@@ -7,10 +7,13 @@ on:
 jobs:
   build:
 
-    runs-on: python:3.11
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' 
     
     - name: Install
       run: make develop
