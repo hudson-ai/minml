@@ -36,14 +36,13 @@ class PromptHelper(ABC):
             **kwds, response_type=object_schema, capture_name="result"
         )
         result = lm["result"]
+        object = None
+        error = None
         if object_schema is not None:
             try:
                 object = TypeAdapter(object_schema).validate_json(result)
             except ValidationError as e:
                 error = str(e)
-                object = None
-            else:
-                error = None
 
         return Response[object_schema](
             prompt_with_completion=str(lm),
