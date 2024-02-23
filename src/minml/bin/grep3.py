@@ -65,8 +65,8 @@ def main(argv=None):
     model = get_model()
     prompt = GrepPrompt(model)
     response = prompt(text=args.text, object_schema=args.schema, name=args.irregex)
-    # print("\n".join(dumps(c) for c in response.object))
-    print(response.prompt_with_completion)
+    print("\n".join(dumps(c) for c in response.object))
+    # print(response.prompt_with_completion)
 
 
 if __name__ == "__main__":
