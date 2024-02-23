@@ -34,22 +34,22 @@ def test_gen_int(model):
     m = model + "9 + 2 = "
     with block("int"):
         m += types.gen_int()
-    TypeAdapter(int).validate_json(m["int"])
-
+    o = TypeAdapter(int).validate_json(m["int"])
+    assert o == 11
 
 def test_gen_float(model):
     m = model + "9.5 + 2 = "
     with block("float"):
         m += types.gen_float()
-    TypeAdapter(float).validate_json(m["float"])
-
+    o = TypeAdapter(float).validate_json(m["float"])
+    assert o == 11.5
 
 def test_gen_bool(model):
-    m = model + "Q: 9 = 2, true or false? A: "
+    m = model + "Q: 9 == 2, true or false? A: "
     with block("bool"):
         m += types.gen_bool()
-    TypeAdapter(bool).validate_json(m["bool"])
-
+    o = TypeAdapter(bool).validate_json(m["bool"])
+    assert o == False
 
 def test_gen_schema(model, guy_schema):
     m = model + "A dude: "
