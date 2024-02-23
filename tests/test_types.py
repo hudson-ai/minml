@@ -10,6 +10,7 @@ from minml import types
 
 MODEL_FILE = gpts.Mistral().path()
 
+
 @pytest.fixture(scope="session")
 def model():
     return LlamaCpp(MODEL_FILE, echo=False)
@@ -31,13 +32,15 @@ def test_gen_str(model):
         m += types.gen_str()
     TypeAdapter(str).validate_json(m["str"])
 
+
 def test_regex(model):
-    type = Annotated[str, StringConstraints(pattern=r'[A-Z]\d')]
+    type = Annotated[str, StringConstraints(pattern=r"[A-Z]\d")]
     m = model + "my favorite steak sauce is "
     with block("str"):
         m += types.gen_type(type)
-    o = TypeAdapter(type).validate_json(m['str'])
-    assert o == 'A1'
+    o = TypeAdapter(type).validate_json(m["str"])
+    assert o == "A1"
+
 
 def test_gen_int(model):
     m = model + "9 + 2 = "
@@ -46,12 +49,14 @@ def test_gen_int(model):
     o = TypeAdapter(int).validate_json(m["int"])
     assert o == 11
 
+
 def test_gen_float(model):
     m = model + "9.5 + 2 = "
     with block("float"):
         m += types.gen_float()
     o = TypeAdapter(float).validate_json(m["float"])
     assert o == 11.5
+
 
 def test_gen_bool(model):
     m = model + "Q: 9 == 2, true or false? A: "
@@ -60,10 +65,11 @@ def test_gen_bool(model):
     o = TypeAdapter(bool).validate_json(m["bool"])
     assert o == False
 
+
 def test_gen_schema(model, guy_schema):
     m = model + "A dude: "
     with block("guy"):
-        m += types.gen_schema(guy_schema)
+        m += types.gen_pydantic(guy_schema)
     guy_schema.model_validate_json(m["guy"])
 
 

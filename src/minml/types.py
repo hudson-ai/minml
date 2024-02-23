@@ -1,11 +1,11 @@
 from types import UnionType, NoneType, GenericAlias
 from typing import get_origin, get_args
+from collections.abc import Collection
 from typing_extensions import _AnnotatedAlias
 from annotated_types import GroupedMetadata
-from collections.abc import Collection
 from pydantic import StringConstraints, BaseModel
 from guidance import gen, select
-from guidance._grammar import Null, Byte, GrammarFunction, Join, Select, string
+from guidance._grammar import Byte, GrammarFunction, Join, Select, string
 
 __all__ = [
     "gen_bool",
@@ -13,7 +13,7 @@ __all__ = [
     "gen_float",
     "gen_str",
     "gen_list",
-    "gen_schema",
+    "gen_pydantic",
     "gen_type",
 ]
 
