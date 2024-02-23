@@ -41,7 +41,7 @@ def gen_int() -> GrammarFunction:
 
 
 def gen_float() -> GrammarFunction:
-    return gen(regex=r"(\+|\-)?(\d*\.)?\d+")
+    return gen(regex=r"-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?")
 
 
 def gen_str(**kwds) -> GrammarFunction:
