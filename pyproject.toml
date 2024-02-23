@@ -1,6 +1,6 @@
 [project]
 name = "minml"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     { name="Hudson Cooper", email="hncooper96@gmail.com" },
 ]
@@ -8,7 +8,7 @@ description = "Remove the yammering from LLM outputs."
 dependencies = [
   "pyparsing",
   "pydantic",
-  "guidance >= 0.1.11",
+  "guidance@git+https://github.com/guidance-ai/guidance#992728",
 ]
 
 [project.optional-dependencies]
